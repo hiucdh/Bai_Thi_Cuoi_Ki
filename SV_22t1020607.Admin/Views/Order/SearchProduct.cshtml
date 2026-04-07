@@ -1,0 +1,50 @@
+@model SV_22T1020607.Models.Common.PagedResult<SV_22T1020607.Models.Catalog.Product>
+@{
+    Layout = null;
+}
+
+<!-- Danh sách mặt hàng -->
+@foreach (var item in Model.DataItems)
+{
+    <form action="~/Order/AddToCart" method="post" class="border rounded p-2 mb-2 search-result-item">
+        <input type="hidden" name="productId" value="@item.ProductID" />
+        <input type="hidden" name="productName" value="@item.ProductName" />
+        <input type="hidden" name="photo" value="@item.Photo" />
+
+        <strong>@item.ProductName</strong>
+
+        <div class="row mt-2">
+            <div class="col-4">
+                <img src="@(string.IsNullOrEmpty(item.Photo) ? "/images/products/demo.png" : $"/images/products/{item.Photo}")"
+                     class="img-fluid border" style="max-height:100px" />
+            </div>
+            <div class="col-8">
+                <div class="row g-2">
+                    <div class="col-7">
+                        <label class="form-label mb-0">Giá</label>
+                        <input class="form-control form-control-sm number-separator"
+                               name="salePrice"
+                               value="@item.Price.ToString("0")" />
+                    </div>
+                    <div class="col-5">
+                        <label class="form-label mb-0">SL</label>
+                        <input type="number"
+                               min="1"
+                               name="quantity"
+                               value="1"
+                               class="form-control form-control-sm" />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-sm btn-primary mt-2 w-100">
+                    <i class="bi bi-cart-plus"></i>
+                    Thêm vào giỏ
+                </button>
+            </div>
+        </div>
+    </form>
+}
+
+@await Html.PartialAsync("_Pager", Model)
+
+

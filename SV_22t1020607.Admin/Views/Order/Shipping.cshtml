@@ -1,0 +1,30 @@
+@model int
+@{
+    Layout = null;
+    var shippers = ViewBag.Shippers as IEnumerable<SV_22T1020607.Models.Partner.Shipper>;
+}
+<div class="modal-header text-bg-info">
+    <strong class="modal-title">Chọn người giao hàng</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<form action="~/Order/Shipping/@Model" method="post">
+    <div class="modal-body">
+        <div class="mb-3">
+            <label class="form-label">Người giao hàng</label>
+            <select class="form-select" name="shipperID" required>
+                <option value="">-- Chọn người giao hàng --</option>
+                @if(shippers != null)
+                {
+                    foreach(var s in shippers)
+                    {
+                        <option value="@s.ShipperID">@s.ShipperName</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-bicycle"></i> Giao hàng</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+    </div>
+</form>

@@ -1,0 +1,71 @@
+@model SV_22T1020607.Models.Common.PagedResult<SV_22T1020607.Models.Sales.OrderViewInfo>
+@{
+    Layout = null;
+}
+<div class="mb-2 text-muted">
+    Danh sách này có <strong>@Model.RowCount</strong> đơn hàng.
+    Trang <strong>@Model.Page</strong> trên tổng số <strong>@Model.PageCount</strong> trang.
+</div>
+
+<div class="card">
+    <div class="card-body p-1">
+        <table class="table table-bordered table-hover mb-0 align-middle">
+            <thead class="table-secondary">
+                <tr>
+                    <th>Ngày đặt hàng</th>
+                    <th>Tên khách hàng</th>
+                    <th>Điện thoại</th>
+                    <th>Ngày duyệt</th>
+                    <th>Nhân viên xử lý</th>
+                    <th class="text-center" style="width:140px;">Trạng thái</th>
+                    <th class="text-center" style="width:40px"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.DataItems)
+                {
+                    <tr>
+                        <td>@item.OrderTime.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@item.CustomerName</td>
+                        <td>@item.CustomerPhone</td>
+                        <td>@item.AcceptTime?.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@item.EmployeeName</td>
+                        <td class="text-center">
+                            @if (item.Status == SV_22T1020607.Models.Sales.OrderStatusEnum.New)
+                            {
+                                <span class="badge bg-primary">Đơn hàng mới</span>
+                            }
+                            else if (item.Status == SV_22T1020607.Models.Sales.OrderStatusEnum.Accepted)
+                            {
+                                <span class="badge bg-info">Đã duyệt</span>
+                            }
+                            else if (item.Status == SV_22T1020607.Models.Sales.OrderStatusEnum.Shipping)
+                            {
+                                <span class="badge bg-warning">Đang giao</span>
+                            }
+                            else if (item.Status == SV_22T1020607.Models.Sales.OrderStatusEnum.Completed)
+                            {
+                                <span class="badge bg-success">Hoàn tất</span>
+                            }
+                            else if (item.Status == SV_22T1020607.Models.Sales.OrderStatusEnum.Cancelled)
+                            {
+                                <span class="badge bg-danger">Bị hủy</span>
+                            }
+                            else if (item.Status == SV_22T1020607.Models.Sales.OrderStatusEnum.Rejected)
+                            {
+                                <span class="badge bg-dark">Bị từ chối</span>
+                            }
+                        </td>
+                        <td class="text-center text-nowrap">
+                            <a href="~/Order/Details/@item.OrderID" class="btn btn-sm btn-primary">
+                                <i class="bi bi-receipt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @await Html.PartialAsync("_Pager", Model)
+</div>

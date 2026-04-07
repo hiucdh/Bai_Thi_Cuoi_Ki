@@ -1,0 +1,65 @@
+@using SV_22T1020607.Models.Common
+@using SV_22T1020607.Models.Sales
+@model IEnumerable<SV_22T1020607.Models.Sales.OrderViewInfo>
+@{
+    ViewData["Title"] = "Lịch sử mua hàng";
+}
+
+<div class="card shadow-sm border-0 my-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="fa-solid fa-clock-rotate-left me-2"></i>Lịch sử mua hàng của bạn</h5>
+    </div>
+    <div class="card-body">
+        @if (Model == null || !Model.Any())
+        {
+            <div class="alert alert-info text-center py-4">
+                <i class="fa-solid fa-box-open fs-1 text-muted mb-3"></i>
+                <h5>Bạn chưa có đơn hàng nào!</h5>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary mt-2">Bắt đầu mua sắm ngay</a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center" style="width: 80px">Mã ĐH</th>
+                            <th>Ngày đặt</th>
+                            <th>Tỉnh/Thành</th>
+                            <th>Địa chỉ giao</th>
+                            <th class="text-center">Trạng thái</th>
+                            <th class="text-center" style="width: 120px">Xem ngay</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var o in Model)
+                        {
+                            <tr>
+                                <td class="text-center fw-bold">#@o.OrderID</td>
+                                <td>@o.OrderTime.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@o.DeliveryProvince</td>
+                                <td>@o.DeliveryAddress</td>
+                                <td class="text-center">
+                                    <span class="badge @(
+                                        o.Status == SV_22T1020607.Models.Sales.OrderStatusEnum.New ? "bg-warning text-dark" :
+                                        o.Status == SV_22T1020607.Models.Sales.OrderStatusEnum.Accepted ? "bg-info text-dark" :
+                                        o.Status == SV_22T1020607.Models.Sales.OrderStatusEnum.Shipping ? "bg-primary" :
+                                        o.Status == SV_22T1020607.Models.Sales.OrderStatusEnum.Completed ? "bg-success" : "bg-danger"
+                                    )">
+                                        @o.Status.GetDescription()
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <a asp-action="Details" asp-route-id="@o.OrderID" class="btn btn-sm btn-outline-primary">
+                                        <i class="fa-solid fa-eye"></i> Chi tiết
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,52 @@
+@model SV_22T1020607.Models.Common.PaginationSearchInput
+@{
+    ViewBag.Title = "Quản lý Người giao hàng";
+}
+@section PageToolBar {
+    <a href="~/Shipper/Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i>
+        Bổ sung
+    </a>
+}
+<div class="card mb-3">
+    <div class="card-body">
+        <form id="formSearch" action="~/Shipper/Search" method="get" data-target="searchResult">
+            <div class="input-group">
+                <input type="text"
+                       name="@nameof(Model.SearchValue)"
+                       value="@Model.SearchValue"
+                       class="form-control"
+                       placeholder="Tên người giao hàng..." autofocus />
+                <button class="btn btn-info d-flex align-items-center" type="submit">
+                    <i class="bi bi-search me-1"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="searchResult">
+    <!-- Nơi hiển thị kết quả tìm kiếm thông qua Ajax -->
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("formSearch");
+            
+            // Tải giữ liệu lần đầu
+            paginationSearch(null, form, @Model.Page);
+
+            // Gắn sự kiện submit cho form
+            form.addEventListener("submit", function (e) {
+                paginationSearch(e, this, 1);
+            });
+        });
+
+        // Hàm doSearch dùng cho _Pager.cshtml
+        function doSearch(page) {
+            const form = document.getElementById("formSearch");
+            paginationSearch(null, form, page);
+        }
+    </script>
+}

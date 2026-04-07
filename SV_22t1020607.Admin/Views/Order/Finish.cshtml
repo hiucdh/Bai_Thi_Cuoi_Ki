@@ -1,0 +1,20 @@
+@model int
+@{
+    Layout = null;
+}
+<div class="modal-header text-bg-success">
+    <strong class="modal-title">Hoàn tất đơn hàng</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<form action="~/Order/Finish/@Model" method="post">
+    <div class="modal-body">
+        <div class="alert alert-success d-flex align-items-center">
+            <i class="bi bi-info-circle me-2"></i>
+            Xác nhận đơn hàng đã giao thành công và hoàn tất?
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Hoàn tất</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+    </div>
+</form>

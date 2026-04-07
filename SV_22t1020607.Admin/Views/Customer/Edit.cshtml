@@ -1,0 +1,105 @@
+@model SV_22T1020607.Models.Partner.Customer
+@{
+}
+@section PageToolBar {
+    <button type="submit" form="formEdit" class="btn btn-primary">
+        <i class="bi bi-save"></i>
+        Lưu dữ liệu
+    </button>    
+    <a href="~/Customer" class="btn btn-secondary ms-1">
+        <i class="bi bi-arrow-left"></i>
+        Quay lại
+    </a>
+}
+
+<div class="row justify-content-center">
+    <div class="col-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-people me-2"></i>
+                    Thông tin khách hàng
+                </h5>
+            </div>
+
+            <div class="card-body">
+                <form id="formEdit" action="~/Customer/SaveData" method="post">
+                    <input type="hidden" name="@nameof(Model.CustomerID)" value="@Model.CustomerID" />
+
+                    <div class="row align-items-end">
+                        <div class="col-md-5 mb-3">
+                            <label class="form-label">Tên khách hàng</label>
+                            <input type="text"
+                                   class="form-control"
+                                   name="@nameof(Model.CustomerName)"
+                                   value="@Model.CustomerName"
+                                   placeholder="Nhập tên khách hàng" autofocus />
+                            @Html.ValidationMessage(nameof(Model.CustomerName), new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <label class="form-label">Tên giao dịch</label>
+                            <input type="text"
+                                   class="form-control"
+                                   name="@nameof(Model.ContactName)"
+                                   value="@Model.ContactName"
+                                   placeholder="Nhập tên giao dịch" />
+                            @Html.ValidationMessage(nameof(Model.ContactName), new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label class="form-label d-block">Trạng thái</label>
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       name="@nameof(Model.IsLocked)"
+                                       value="false"
+                                       id="IsLocked"
+                                       @(Model.IsLocked == true ? "" : "checked") />
+                                <input type="hidden" name="@nameof(Model.IsLocked)" value="true" />
+                                <label class="form-check-label" for="IsLocked">
+                                    Đang hoạt động
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5 mb-3">
+                            <label class="form-label">Điện thoại</label>
+                            <input type="tel"
+                                   class="form-control"
+                                   name="@nameof(Model.Phone)"
+                                   value="@Model.Phone"
+                                   placeholder="Nhập số điện thoại" />
+                        </div>
+
+                        <div class="col-md-7 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email"
+                                   class="form-control"
+                                   name="@nameof(Model.Email)"
+                                   value="@Model.Email"
+                                   placeholder="Nhập email" />
+                            @Html.ValidationMessage(nameof(Model.Email), new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Địa chỉ</label>
+                        <textarea class="form-control"
+                                  name="@nameof(Model.Address)"
+                                  rows="3"
+                                  placeholder="Nhập địa chỉ">@Model.Address</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tỉnh / Thành</label>
+                        @Html.DropDownListFor(m => m.Province, await SV22T1020607.Admin.SelectListHelper.Provinces(), new { @class = "form-select" })
+                        @Html.ValidationMessage(nameof(Model.Province), new { @class = "text-danger" })
+                    </div>
+
+                    @Html.ValidationMessage("Error", new { @class = "text-danger" })
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

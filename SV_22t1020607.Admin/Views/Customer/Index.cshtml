@@ -1,0 +1,54 @@
+﻿@model SV_22T1020607.Models.Common.PaginationSearchInput
+@{
+    ViewBag.Title = "Quản lý Khách hàng";
+}
+@section PageToolBar {
+    <a href="~/Customer/Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i>
+        Bổ sung
+    </a>
+}
+<div class="card mb-3">
+    <div class="card-body">
+        <form id="formSearch" action="~/Customer/Search" method="get" data-target="searchResult">
+            <input type="hidden" name="@nameof(Model.PageSize)" value="@Model.PageSize" />
+            <div class="input-group">
+                <input type="text"
+                       name="@nameof(Model.SearchValue)"
+                       class="form-control"
+                       placeholder="Nhập tên khách hàng cần tìm..." 
+                       value="@Model.SearchValue"
+                       autofocus />
+                <button class="btn btn-info d-flex align-items-center" type="submit">
+                    <i class="bi bi-search me-1"></i> Tìm kiếm
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="searchResult">
+    <!-- Nơi hiển thị kết quả tìm kiếm thông qua AJAX (handled by site.js) -->
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("formSearch");
+            
+            // Gọi hàm tìm kiếm ngay khi load trang
+            paginationSearch(null, form, @Model.Page);
+
+            // Xử lý sự kiện submit form
+            form.addEventListener("submit", function (e) {
+                paginationSearch(e, this, 1);
+            });
+        });
+
+        // Hàm doSearch dùng cho phân trang trong Search.cshtml
+        function doSearch(page) {
+            const form = document.getElementById("formSearch");
+            paginationSearch(null, form, page);
+        }
+    </script>
+}

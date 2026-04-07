@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Applications/">
+    <Project Path="SV22T1020607.Shop/SV22T1020607.Shop.csproj" Id="3d0d6ae2-c1eb-4b05-97df-6d67c22a44e8" />
+    <Project Path="SV_22t1020607.Admin/SV22T1020607.Admin.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="SV22T1020607.BusinessLayers/SV22T1020607.BusinessLayers.csproj" Id="b9e4b996-af66-4778-bb2a-62a9338787d2" />
+    <Project Path="SV22T1020607.DataLayers/SV22T1020607.DataLayers.csproj" Id="78569b52-e4e7-4af8-af3a-5daf77d1b783" />
+    <Project Path="SV_22T1020607.Models/SV22T1020607.Models.csproj" Id="b3f4a1e7-6e2e-4496-9df0-9c065cc98323" />
+  </Folder>
+  <Folder Name="/Notes/">
+    <File Path="Log.md" />
+  </Folder>
+</Solution>

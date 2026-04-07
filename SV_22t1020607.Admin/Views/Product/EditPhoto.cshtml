@@ -1,0 +1,110 @@
+@model SV_22T1020607.Models.Catalog.ProductPhoto
+@{
+    int productId = ViewBag.ProductID ?? Model.ProductID;
+    string method = ViewBag.Method ?? "add";
+}
+@section PageToolBar {
+    <button type="submit" form="formEditPhoto" class="btn btn-primary">
+        <i class="bi bi-save"></i> Lưu ảnh
+    </button>
+    <a href="~/Product/Edit/@productId" class="btn btn-secondary ms-1">
+        <i class="bi bi-arrow-left"></i> Quay lại
+    </a>
+}
+
+<div class="row justify-content-center">
+    <div class="col-12">
+        <div class="card card-outline card-info">
+            <div class="card-header">
+                <h5 class="mb-0">Thông tin ảnh mặt hàng</h5>
+            </div>
+            <div class="card-body">
+                <form id="formEditPhoto" action="~/Product/SavePhoto" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="PhotoID" value="@Model.PhotoID" />
+                    <input type="hidden" name="ProductID" value="@productId" />
+                    <input type="hidden" name="Photo" value="@Model.Photo" />
+
+                    @* Upload ảnh *@
+                    <div class="row mb-3 align-items-center">
+                        <label class="col-sm-3 fw-semibold">Chọn ảnh</label>
+                        <div class="col-sm-9">
+                            <input type="file"
+                                   name="uploadPhoto"
+                                   class="form-control"
+                                   accept="image/*"
+                                   onchange="previewImage(this)" />
+                            <div class="form-text">Để trống nếu không muốn thay đổi ảnh</div>
+                        </div>
+                    </div>
+
+                    @* Xem trước *@
+                    <div class="row mb-3">
+                        <label class="col-sm-3 fw-semibold">Xem trước</label>
+                        <div class="col-sm-9">
+                            <img id="imgPreview"
+                                 src="@(string.IsNullOrEmpty(Model.Photo) ? "/images/products/nophoto.png" : $"/images/products/{Model.Photo}")"
+                                 class="img-thumbnail"
+                                 style="max-height:200px;" />
+                        </div>
+                    </div>
+
+                    @* Mô tả *@
+                    <div class="row mb-3">
+                        <label class="col-sm-3 fw-semibold">Mô tả</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="Description"
+                                   value="@Model.Description"
+                                   class="form-control"
+                                   placeholder="Mô tả ngắn về ảnh" />
+                        </div>
+                    </div>
+
+                    @* Thứ tự hiển thị *@
+                    <div class="row mb-3">
+                        <label class="col-sm-3 fw-semibold">Thứ tự hiển thị</label>
+                        <div class="col-sm-3">
+                            <input type="number"
+                                   name="DisplayOrder"
+                                   class="form-control"
+                                   value="@(Model.DisplayOrder == 0 ? 1 : Model.DisplayOrder)"
+                                   min="1" />
+                        </div>
+                    </div>
+
+                    @* Trạng thái *@
+                    <div class="row mb-4">
+                        <label class="col-sm-3 fw-semibold">Trạng thái</label>
+                        <div class="col-sm-9">
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       name="IsHidden"
+                                       value="true"
+                                       @(Model.IsHidden ? "checked" : "")
+                                       id="IsHidden" />
+                                <input type="hidden" name="IsHidden" value="false" />
+                                <label class="form-check-label" for="IsHidden">
+                                    Ẩn ảnh (không hiển thị với khách hàng)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('imgPreview').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

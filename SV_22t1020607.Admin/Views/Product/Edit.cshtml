@@ -1,0 +1,219 @@
+@model SV_22T1020607.Models.Catalog.Product
+@{
+    bool isEdit = ViewBag.IsEdit ?? false;
+}
+@section PageToolBar {
+    <button type="submit" form="formEdit" class="btn btn-primary">
+        <i class="bi bi-save"></i> Lưu dữ liệu
+    </button>
+    <a href="~/Product" class="btn btn-secondary ms-1">
+        <i class="bi bi-arrow-left"></i> Quay lại
+    </a>
+}
+
+<div class="row">
+    <div class="col-md-7">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Thông tin cơ bản</h5>
+            </div>
+            <div class="card-body">
+                <form id="formEdit" action="~/Product/Save" method="post">
+                    <input type="hidden" name="@nameof(Model.ProductID)" value="@Model.ProductID" />
+
+                    @* Tên mặt hàng *@
+                    <div class="mb-3">
+                        <label class="form-label">Tên mặt hàng <span class="text-danger">*</span></label>
+                        @{
+                            bool nameErr = ViewData.ModelState.ContainsKey(nameof(Model.ProductName))
+                                          && ViewData.ModelState[nameof(Model.ProductName)]!.Errors.Count > 0;
+                        }
+                        <input type="text" name="@nameof(Model.ProductName)" value="@Model.ProductName"
+                               class="form-control @(nameErr ? "is-invalid" : "")" autofocus />
+                        @if (nameErr)
+                        {
+                            <div class="invalid-feedback">
+                                <i class="bi bi-exclamation-circle"></i>
+                                @ViewData.ModelState[nameof(Model.ProductName)]!.Errors[0].ErrorMessage
+                            </div>
+                        }
+                    </div>
+
+                    @* Mô tả *@
+                    <div class="mb-3">
+                        <label class="form-label">Mô tả mặt hàng</label>
+                        <textarea class="form-control" name="@nameof(Model.ProductDescription)" rows="3">@Model.ProductDescription</textarea>
+                    </div>
+
+                    @* Loại hàng & Nhà cung cấp *@
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Loại hàng <span class="text-danger">*</span></label>
+                            @{
+                                bool catErr = ViewData.ModelState.ContainsKey(nameof(Model.CategoryID))
+                                             && ViewData.ModelState[nameof(Model.CategoryID)]!.Errors.Count > 0;
+                            }
+                            <select class="form-select @(catErr ? "is-invalid" : "")" name="@nameof(Model.CategoryID)">
+                                <option value="0">-- Chọn loại hàng --</option>
+                                @foreach (var item in SV22T1020607.BusinessLayers.CommonDataService.ListOfCategories())
+                                {
+                                    if (item.CategoryID == Model.CategoryID)
+                                    {
+                                        <option value="@item.CategoryID" selected>@item.CategoryName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.CategoryID">@item.CategoryName</option>
+                                    }
+                                }
+                            </select>
+                            @if (catErr)
+                            {
+                                <div class="invalid-feedback">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    @ViewData.ModelState[nameof(Model.CategoryID)]!.Errors[0].ErrorMessage
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nhà cung cấp <span class="text-danger">*</span></label>
+                            @{
+                                bool supErr = ViewData.ModelState.ContainsKey(nameof(Model.SupplierID))
+                                             && ViewData.ModelState[nameof(Model.SupplierID)]!.Errors.Count > 0;
+                            }
+                            <select class="form-select @(supErr ? "is-invalid" : "")" name="@nameof(Model.SupplierID)">
+                                <option value="0">-- Chọn nhà cung cấp --</option>
+                                @foreach (var item in SV22T1020607.BusinessLayers.PartnerDataService.ListOfSuppliers())
+                                {
+                                    if (item.SupplierID == Model.SupplierID)
+                                    {
+                                        <option value="@item.SupplierID" selected>@item.SupplierName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.SupplierID">@item.SupplierName</option>
+                                    }
+                                }
+                            </select>
+                            @if (supErr)
+                            {
+                                <div class="invalid-feedback">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    @ViewData.ModelState[nameof(Model.SupplierID)]!.Errors[0].ErrorMessage
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    @* Đơn vị tính & Giá bán *@
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Đơn vị tính <span class="text-danger">*</span></label>
+                            @{
+                                bool unitErr = ViewData.ModelState.ContainsKey(nameof(Model.Unit))
+                                              && ViewData.ModelState[nameof(Model.Unit)]!.Errors.Count > 0;
+                            }
+                            <input type="text" name="@nameof(Model.Unit)" value="@Model.Unit"
+                                   class="form-control @(unitErr ? "is-invalid" : "")" />
+                            @if (unitErr)
+                            {
+                                <div class="invalid-feedback">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    @ViewData.ModelState[nameof(Model.Unit)]!.Errors[0].ErrorMessage
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Giá bán <span class="text-danger">*</span></label>
+                            @{
+                                bool priceErr = ViewData.ModelState.ContainsKey(nameof(Model.Price))
+                                               && ViewData.ModelState[nameof(Model.Price)]!.Errors.Count > 0;
+                            }
+                            <input type="number" name="@nameof(Model.Price)" value="@Model.Price"
+                                   class="form-control @(priceErr ? "is-invalid" : "")" />
+                            @if (priceErr)
+                            {
+                                <div class="invalid-feedback">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    @ViewData.ModelState[nameof(Model.Price)]!.Errors[0].ErrorMessage
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Ảnh</label>
+                        <input type="text" name="@nameof(Model.Photo)" value="@Model.Photo"
+                               class="form-control" placeholder="Tên file ảnh" />
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="@nameof(Model.IsSelling)"
+                               value="true" @(Model.IsSelling ? "checked" : "") id="flexCheckDefault">
+                        <input type="hidden" name="@nameof(Model.IsSelling)" value="false" />
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Hiện đang được bán
+                        </label>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @if (isEdit)
+    {
+        <div class="col-md-5">
+            @* Thư viện ảnh *@
+            <div class="card card-info card-outline mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Thư viện ảnh</h5>
+                    <a href="~/Product/Photo/@Model.ProductID?method=add" class="btn btn-sm btn-info">Bổ sung</a>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <tbody>
+                            @foreach (var photo in SV22T1020607.BusinessLayers.ProductDataService.ListPhotos(Model.ProductID))
+                            {
+                                <tr>
+                                    <td class="align-middle" style="width: 60px">
+                                        <img src="/images/products/@photo.Photo" alt="img" class="img-thumbnail" />
+                                    </td>
+                                    <td class="align-middle">@photo.Description</td>
+                                    <td class="text-end align-middle" style="width: 80px">
+                                        <a href="~/Product/Photo/@Model.ProductID?method=edit&photoId=@photo.PhotoID" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
+                                        <a href="~/Product/Photo/@Model.ProductID?method=delete&photoId=@photo.PhotoID" class="btn btn-sm btn-danger" onclick="return confirm('Xóa ảnh này?')"><i class="bi bi-trash"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @* Thuộc tính mặt hàng *@
+            <div class="card card-success card-outline">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Thuộc tính</h5>
+                    <a href="~/Product/Attribute/@Model.ProductID?method=add" class="btn btn-sm btn-success">Bổ sung</a>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <tbody>
+                            @foreach (var attr in SV22T1020607.BusinessLayers.ProductDataService.ListAttributes(Model.ProductID))
+                            {
+                                <tr>
+                                    <td class="align-middle"><strong>@attr.AttributeName</strong></td>
+                                    <td class="align-middle">@attr.AttributeValue</td>
+                                    <td class="text-end align-middle" style="width: 80px">
+                                        <a href="~/Product/Attribute/@Model.ProductID?method=edit&attributeId=@attr.AttributeID" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
+                                        <a href="~/Product/Attribute/@Model.ProductID?method=delete&attributeId=@attr.AttributeID" class="btn btn-sm btn-danger" onclick="return confirm('Xóa thuộc tính này?')"><i class="bi bi-trash"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>

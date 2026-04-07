@@ -1,0 +1,20 @@
+@model int
+@{
+    Layout = null;
+}
+<div class="modal-header text-bg-danger">
+    <strong class="modal-title">Từ chối đơn hàng</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<form action="~/Order/Reject/@Model" method="post">
+    <div class="modal-body">
+        <div class="alert alert-danger d-flex align-items-center">
+            <i class="bi bi-info-circle me-2"></i>
+            Bạn có chắc chắn muốn từ chối đơn hàng này không?
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-danger"><i class="bi bi-slash-circle"></i> Từ chối đơn hàng</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+    </div>
+</form>

@@ -1,0 +1,228 @@
+@model List<SV22T1020607.Admin.Models.CartItem>
+@{
+    ViewBag.Title = "Lập đơn hàng";
+}
+
+<div class="row">
+    <!-- Tìm kiếm & chọn mặt hàng -->
+    <div class="col-4">
+        <div class="card card-outline card-primary h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-search"></i>
+                    Lựa chọn hàng cần bán
+                </h5>
+            </div>
+
+            <div class="card-body">
+                <!-- Search -->
+                <form id="formSearch" action="~/Order/SearchProduct" method="get" data-target="searchResult">
+                    <input type="hidden" name="PageSize" value="@ViewBag.ProductSearchInput.PageSize" />
+                    <div class="input-group">
+                        <input class="form-control"
+                               name="searchValue"
+                               placeholder="Nhập tên mặt hàng cần tìm" value="@ViewBag.ProductSearchInput.SearchValue" autofocus />
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <div id="searchResult" class="mt-3">
+                    <!-- Danh sách mặt hàng -->
+                </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Giỏ hàng và thông tin khách hàng -->
+    <div class="col-8">
+        <!-- Giỏ hàng -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-outline card-success">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-cart"></i>
+                            Danh sách mặt hàng đã chọn
+                        </h5>
+                    </div>
+
+                    <div class="card-body" id="shoppingCart">
+                        @await Html.PartialAsync("ShoppingCart", Model)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Thông tin khách hàng và nơi giao hàng -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="card card-outline card-info">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-person"></i>
+                            Thông tin khách hàng & nơi giao hàng
+                        </h5>
+                    </div>
+
+                    <div class="card-body">
+                        <form id="formOrderInit" action="~/Order/Init" method="post">
+                            <div class="row mb-3">
+                                <label class="col-md-2 col-form-label">Khách hàng</label>
+                                <div class="col-md-10">
+                                    <select class="form-select select2" name="customerID">
+                                        <option value="0">-- Chọn khách hàng --</option>
+                                        @foreach (var customer in ViewBag.Customers)
+                                        {
+                                            <option value="@customer.CustomerID">@customer.CustomerName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-md-2 col-form-label">Tỉnh/thành</label>
+                                <div class="col-md-10">
+                                    <select class="form-select select2" name="deliveryProvince">
+                                        <option value="">-- Chọn Tỉnh/thành giao hàng --</option>
+                                        @foreach (var p in ViewBag.Provinces)
+                                        {
+                                            <option value="@p.ProvinceName">@p.ProvinceName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-md-2 col-form-label">Địa chỉ</label>
+                                <div class="col-md-10">
+                                    <textarea class="form-control" name="deliveryAddress"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i>
+                                    Lập đơn hàng
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .select2-container .select2-selection--single {
+            height: 38px;
+            border: 1px solid #ced4da;
+            padding: 5px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            top: 6px;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Khởi tạo Select2 cho các dropdown
+            $('.select2').select2({
+                placeholder: "Nhập tìm kiếm...",
+                allowClear: true,
+                language: {
+                    noResults: function () {
+                        return "Không tìm thấy kết quả. Bạn có thể <a href='/Customer/Create' target='_blank'>Thêm khách hàng mới</a>";
+                    }
+                },
+                escapeMarkup: function (markup) {
+                    return markup; // Cho phép render HTML trong message
+                }
+            });
+
+            // Khởi tạo tìm kiếm sản phẩm ban đầu
+            paginationSearch(null, document.getElementById("formSearch"), @ViewBag.ProductSearchInput.Page);
+
+            $("#formSearch").submit(function (e) {
+                paginationSearch(e, this, 1);
+            });
+
+            $(document).on("submit", "#searchResult form.search-result-item", function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: $(this).attr("action"),
+                    type: "POST",
+                    data: $(this).serialize(),
+                    success: function (res) {
+                        $('#shoppingCart').html(res);
+                    }
+                });
+            });
+
+            $("#formOrderInit").submit(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: $(this).attr("action"),
+                    type: "POST",
+                    data: $(this).serialize(),
+                    success: function (res) {
+                        var success = res.success !== undefined ? res.success : res.Success;
+                        var message = res.message !== undefined ? res.message : res.Message;
+                        var data = res.data !== undefined ? res.data : res.Data;
+
+                        if (!success) {
+                            alert(message);
+                        } else {
+                            window.location.href = "/Order/Details/" + data;
+                        }
+                    }
+                });
+            });
+        });
+
+        function doSearch(page) {
+            paginationSearch(null, document.getElementById("formSearch"), page);
+        }
+
+        function updateCart(id, qty, price) {
+            $.ajax({
+                url: '/Order/AddToCart',
+                type: 'POST',
+                data: { productId: id, quantity: qty, salePrice: price },
+                success: function (res) {
+                    $('#shoppingCart').html(res);
+                }
+            });
+        }
+
+        function removeFromCart(id) {
+            $.ajax({
+                url: '/Order/RemoveFromCart',
+                type: 'POST',
+                data: { id: id },
+                success: function (res) {
+                    $('#shoppingCart').html(res);
+                }
+            });
+        }
+
+        function clearCart() {
+            if (confirm("Xóa giỏ hàng?")) {
+                $.ajax({
+                    url: '/Order/ClearCart',
+                    type: 'POST',
+                    success: function (res) {
+                        $('#shoppingCart').html(res);
+                    }
+                });
+            }
+        }
+
+    </script>
+}

@@ -1,0 +1,36 @@
+﻿@model SV_22T1020607.Models.Catalog.Category
+@{
+    ViewBag.Title = "Xóa Loại hàng";
+}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card card-danger card-outline mt-5">
+            <div class="card-header">
+                <h5 class="card-title mb-0 text-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Xác nhận xóa loại hàng
+                </h5>
+            </div>
+            <div class="card-body text-center">
+                <p class="mb-4">
+                    Bạn có chắc chắn muốn xóa loại hàng: <br />
+                    <strong class="fs-5">@Model.CategoryName</strong>?
+                </p>
+                
+                <form action="~/Category/Delete/@Model.CategoryID" method="post">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <button type="submit" class="btn btn-danger px-4">
+                            <i class="bi bi-trash"></i> Đồng ý xóa
+                        </button>
+                        <a href="~/Category" class="btn btn-secondary px-4">
+                            <i class="bi bi-x-circle"></i> Hủy bỏ
+                        </a>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-muted small">
+                Lưu ý: Hành động này không thể hoàn tác nếu loại hàng chưa có dữ liệu liên quan.
+            </div>
+        </div>
+    </div>
+</div>

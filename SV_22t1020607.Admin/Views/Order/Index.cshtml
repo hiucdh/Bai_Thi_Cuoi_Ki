@@ -1,0 +1,78 @@
+@model SV_22T1020607.Models.Sales.OrderSearchInput
+@{
+    ViewBag.Title = "Quản lý Đơn hàng";
+}
+@section PageToolBar {
+    <a href="~/Order/Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i>
+        Lập đơn hàng mới
+    </a>
+}
+<div class="card mb-3">
+    <div class="card-body">
+        <form id="formSearch" action="~/Order/Search" method="get" data-target="searchResult">
+            <div class="row g-2">
+                <div class="col-md-3">
+                    <label class="form-label">Trạng thái đơn hàng</label>
+                    <select name="@nameof(Model.Status)" class="form-select">
+                        <option value="0">-- Tất cả --</option>
+                        <option value="1" selected="@(Model.Status == (SV_22T1020607.Models.Sales.OrderStatusEnum)1)">Đơn hàng mới</option>
+                        <option value="2" selected="@(Model.Status == (SV_22T1020607.Models.Sales.OrderStatusEnum)2)">Đã duyệt</option>
+                        <option value="3" selected="@(Model.Status == (SV_22T1020607.Models.Sales.OrderStatusEnum)3)">Đang giao</option>
+                        <option value="4" selected="@(Model.Status == (SV_22T1020607.Models.Sales.OrderStatusEnum)4)">Hoàn tất</option>
+                        <option value="-1" selected="@(Model.Status == (SV_22T1020607.Models.Sales.OrderStatusEnum)(-1))">Bị hủy</option>
+                        <option value="-2" selected="@(Model.Status == (SV_22T1020607.Models.Sales.OrderStatusEnum)(-2))">Bị từ chối</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Thời gian lập đơn hàng</label>
+                    <div class="input-group">
+                        <input type="text" name="@nameof(Model.DateFrom)" value="@(Model.DateFrom?.ToString("dd/MM/yyyy"))" class="form-control date-picker" placeholder="Từ ngày (dd/MM/yyyy)..." />
+                        <span class="input-group-text">-</span>
+                        <input type="text" name="@nameof(Model.DateTo)" value="@(Model.DateTo?.ToString("dd/MM/yyyy"))" class="form-control date-picker" placeholder="...đến ngày (dd/MM/yyyy)" />
+                    </div>
+                </div>
+
+                <div class="col-md-5">
+                    <label class="form-label">Tên khách hàng</label>
+                    <div class="input-group">
+                        <input type="text"
+                               name="@nameof(Model.SearchValue)"
+                               value="@Model.SearchValue"
+                               class="form-control"
+                               placeholder="Tên khách hàng..." autofocus />
+
+                        <button class="btn btn-info d-flex align-items-center" type="submit">
+                            <i class="bi bi-search me-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="searchResult">   
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("formSearch");
+            
+            // Tải giữ liệu lần đầu
+            paginationSearch(null, form, @Model.Page);
+
+            // Gắn sự kiện submit cho form
+            form.addEventListener("submit", function (e) {
+                paginationSearch(e, this, 1);
+            });
+        });
+
+        function doSearch(page) {
+            const form = document.getElementById("formSearch");
+            paginationSearch(null, form, page);
+        }
+    </script>
+}

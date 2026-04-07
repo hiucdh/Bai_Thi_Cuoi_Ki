@@ -1,0 +1,95 @@
+@using SV_22T1020607.Models.Sales
+@model SV_22T1020607.Models.Sales.OrderViewInfo
+@{
+    ViewData["Title"] = "Chi Tiết Đơn Hàng";
+    var details = ViewBag.Details as IEnumerable<SV_22T1020607.Models.Sales.OrderDetailViewInfo>;
+}
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 mb-4 h-100">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fa-solid fa-file-invoice me-2"></i>Thông tin chung</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Mã đơn hàng:</strong> <span class="fw-bold">#@Model.OrderID</span></p>
+                <p><strong>Ngày đặt hàng:</strong> @Model.OrderTime.ToString("dd/MM/yyyy HH:mm")</p>
+                <p><strong>Trang thái:</strong> 
+                    <span class="badge @(
+                        Model.Status == SV_22T1020607.Models.Sales.OrderStatusEnum.New ? "bg-warning text-dark" :
+                        Model.Status == SV_22T1020607.Models.Sales.OrderStatusEnum.Accepted ? "bg-info text-dark" :
+                        Model.Status == SV_22T1020607.Models.Sales.OrderStatusEnum.Shipping ? "bg-primary" :
+                        Model.Status == SV_22T1020607.Models.Sales.OrderStatusEnum.Completed ? "bg-success" : "bg-danger"
+                    )">
+                        @Model.Status.GetDescription()
+                    </span>
+                </p>
+                <hr>
+                <h6 class="fw-bold"><i class="fa-solid fa-map-location-dot me-2"></i>Giao hàng tới</h6>
+                <p class="mb-1"><strong>Tỉnh/Thành:</strong> @Model.DeliveryProvince</p>
+                <p class="mb-1"><strong>Địa chỉ:</strong> @Model.DeliveryAddress</p>
+                @if (Model.Status == SV_22T1020607.Models.Sales.OrderStatusEnum.Shipping)
+                {
+                    <p class="mb-1 text-primary"><strong>Người giao:</strong> @Model.ShipperName (@Model.ShipperPhone)</p>
+                }
+            </div>
+            <div class="card-footer bg-white border-0 text-center">
+                <a asp-action="Index" class="btn btn-outline-secondary w-100">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Trở về lích sử mua
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fa-solid fa-box-open me-2"></i>Sản phẩm đã mua</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center" style="width: 80px">STT</th>
+                            <th style="width: 80px">Ảnh</th>
+                            <th>Mặt hàng</th>
+                            <th class="text-end">Đơn giá</th>
+                            <th class="text-center">S.Lượng</th>
+                            <th class="text-end">Tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int stt = 1;
+                        }
+                        @if (details != null)
+                        {
+                            foreach (var item in details)
+                            {
+                                <tr>
+                                    <td class="text-center fw-bold">@stt</td>
+                                    <td>
+                                        <img src="http://localhost:5030/images/products/@(string.IsNullOrEmpty(item.Photo) ? "macbook.png" : item.Photo)" 
+                                             onerror="this.src='/images/no-image.png';" 
+                                             class="img-thumbnail" style="width: 60px; height: 60px; object-fit: contain;">
+                                    </td>
+                                    <td>@item.ProductName</td>
+                                    <td class="text-end">@item.SalePrice.ToString("N0")</td>
+                                    <td class="text-center">@item.Quantity</td>
+                                    <td class="text-end fw-bold text-danger">@item.TotalPrice.ToString("N0")</td>
+                                </tr>
+                                stt++;
+                            }
+                        }
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <td colspan="5" class="text-end fw-bold fs-5">Tổng tiền thanh toán:</td>
+                            <td class="text-end text-danger fw-bold fs-5">@(details?.Sum(d => d.TotalPrice).ToString("N0") ?? "0") đ</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
